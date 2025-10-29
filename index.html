@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Company Document QR Generator</title>
+  <link rel="stylesheet" href="style.css">
+  
+  <!-- Firebase SDK v9+ (Modular) -->
+  <script type="module" src="script.js"></script>
+</head>
+<body>
+  <!-- Header Section -->
+  <header class="header">
+    <div class="header-content">
+      <!-- 🎨 CUSTOMIZATION POINT: Replace with your company logo -->
+      <div class="logo-container">
+        <img src="https://via.placeholder.com/200x60/4F46E5/ffffff?text=YOUR+COMPANY" 
+             alt="Company Logo" 
+             class="company-logo">
+      </div>
+      <h1 class="header-title">Company Document QR Generator</h1>
+      <p class="header-subtitle">Upload documents and generate branded QR codes instantly</p>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="main-content">
+    <div class="container">
+      
+      <!-- Upload Section -->
+      <section class="upload-section" id="uploadSection">
+        <div class="card">
+          <div class="card-header">
+            <svg class="icon-document" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+              <polyline points="14 2 14 8 20 8"></polyline>
+            </svg>
+            <h2>Upload PDF Document</h2>
+          </div>
+          
+          <div class="upload-area" id="uploadArea">
+            <input type="file" 
+                   id="fileInput" 
+                   accept=".pdf,application/pdf" 
+                   class="file-input">
+            <label for="fileInput" class="upload-label">
+              <svg class="icon-upload" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                <polyline points="17 8 12 3 7 8"></polyline>
+                <line x1="12" y1="3" x2="12" y2="15"></line>
+              </svg>
+              <span class="upload-text">
+                <strong>Click to upload</strong> or drag and drop
+              </span>
+              <span class="upload-hint">PDF files only (Max 10MB)</span>
+            </label>
+          </div>
+
+          <button id="uploadBtn" class="btn btn-primary" disabled>
+            <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="20 6 9 17 4 12"></polyline>
+            </svg>
+            Generate QR Code
+          </button>
+        </div>
+      </section>
+
+      <!-- Loading Indicator -->
+      <div class="loading" id="loading">
+        <div class="spinner"></div>
+        <p>Processing your document...</p>
+      </div>
+
+      <!-- Results Section -->
+      <section class="results-section" id="resultsSection">
+        <div class="card">
+          <div class="card-header">
+            <svg class="icon-success" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="20 6 9 17 4 12"></polyline>
+            </svg>
+            <h2>QR Code Generated Successfully</h2>
+          </div>
+
+          <div class="results-grid">
+            <!-- QR Code Display -->
+            <div class="qr-container">
+              <div class="qr-wrapper">
+                <img id="qrImage" src="" alt="Generated QR Code" class="qr-image">
+                <div class="qr-badge">
+                  <!-- 🎨 CUSTOMIZATION POINT: This badge shows your brand -->
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="20 6 9 17 4 12"></polyline>
+                  </svg>
+                  Branded QR
+                </div>
+              </div>
+              <button id="downloadQrBtn" class="btn btn-secondary">
+                <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                  <polyline points="7 10 12 15 17 10"></polyline>
+                  <line x1="12" y1="15" x2="12" y2="3"></line>
+                </svg>
+                Download QR Code
+              </button>
+            </div>
+
+            <!-- Document Info -->
+            <div class="document-info">
+              <h3>Document Details</h3>
+              <div class="info-row">
+                <span class="info-label">File Name:</span>
+                <span class="info-value" id="fileName">-</span>
+              </div>
+              <div class="info-row">
+                <span class="info-label">File Size:</span>
+                <span class="info-value" id="fileSize">-</span>
+              </div>
+              <div class="info-row">
+                <span class="info-label">Upload Date:</span>
+                <span class="info-value" id="uploadDate">-</span>
+              </div>
+              
+              <div class="link-section">
+                <label class="info-label">Document Link:</label>
+                <div class="link-wrapper">
+                  <input type="text" id="documentUrl" readonly class="link-input">
+                  <button id="copyLinkBtn" class="btn btn-icon-only" title="Copy link">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                      <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                    </svg>
+                  </button>
+                </div>
+                <a id="viewDocumentBtn" href="#" target="_blank" class="btn btn-outline">
+                  <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+                    <polyline points="15 3 21 3 21 9"></polyline>
+                    <line x1="10" y1="14" x2="21" y2="3"></line>
+                  </svg>
+                  View Document
+                </a>
+              </div>
+            </div>
+          </div>
+
+          <button id="newUploadBtn" class="btn btn-secondary-outline">
+            <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="1 4 1 10 7 10"></polyline>
+              <polyline points="23 20 23 14 17 14"></polyline>
+              <path d="M20.49 9A9 9 0 0 0 5.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 0 1 3.51 15"></path>
+            </svg>
+            Upload Another Document
+          </button>
+        </div>
+      </section>
+
+      <!-- Error Message -->
+      <div class="error-message" id="errorMessage">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="10"></circle>
+          <line x1="12" y1="8" x2="12" y2="12"></line>
+          <line x1="12" y1="16" x2="12.01" y2="16"></line>
+        </svg>
+        <span id="errorText"></span>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <p>&copy; 2025 Your Company. All rights reserved.</p>
+  </footer>
+</body>
+</html>
