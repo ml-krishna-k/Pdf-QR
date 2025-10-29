@@ -1,0 +1,12 @@
+services:
+  - type: web
+    name: pdf-qr
+    env: node
+    plan: free
+    buildCommand: npm install
+    startCommand: node server.js
+    autoDeploy: true
+    envVars:
+      - key: NODE_VERSION
+        value: 18
+    healthCheckPath: /api/health

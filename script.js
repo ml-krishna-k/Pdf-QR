@@ -5,7 +5,7 @@
 // ============================================
 // BACKEND API ENDPOINT
 // ============================================
-// Use relative API path so it works locally (with node server) and on Vercel
+// Use same-origin API path (works locally and on Render)
 const API_BASE_URL = '';
 
 // ============================================
@@ -124,35 +124,11 @@ uploadBtn.addEventListener('click', async () => {
 // ============================================
 // FIREBASE UPLOAD
 // ============================================
-// Upload file and return accessible URL (Vercel Blob if available, else local Express)
+// Upload file and return accessible URL via Express backend (Render/local)
 async function uploadToServer(file) {
   const loadingText = loading.querySelector('p');
   if (loadingText) loadingText.textContent = 'Uploading document to server...';
 
-  // Try Vercel Blob signed upload first
-  try {
-    const getUrlResp = await fetch(`/api/blob-upload-url`, { method: 'POST' });
-    if (getUrlResp.ok) {
-      const { uploadUrl } = await getUrlResp.json();
-      const putResp = await fetch(uploadUrl, {
-        method: 'PUT',
-        headers: { 'content-type': file.type || 'application/pdf' },
-        body: file
-      });
-      if (!putResp.ok) {
-        const txt = await putResp.text().catch(() => '');
-        throw new Error(`Blob upload failed: ${txt || putResp.status}`);
-      }
-      const putData = await putResp.json();
-      if (putData && putData.url) {
-        return putData.url;
-      }
-    }
-  } catch (e) {
-    // Fallback below
-  }
-
-  // Fallback to local Express upload
   const form = new FormData();
   form.append('file', file);
   const resp = await fetch(`/api/upload`, { method: 'POST', body: form });
